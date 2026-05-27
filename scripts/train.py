@@ -13,7 +13,12 @@ def main() -> None:
     parser.add_argument("--video_interval", type=int, default=2000, help="Interval between video recordings (steps).")
     parser.add_argument("--seed", type=int, default=None, help="Seed used for the environment.")
     parser.add_argument("--max_iterations", type=int, default=None, help="RL training iterations.")
-    parser.add_argument("--enable_cpg", action="store_true", default=True, help="Enable CPG-based policy heads.")
+    parser.add_argument(
+        "--enable_cpg",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable CPG-based policy heads.",
+    )
     parser.add_argument("--history_length", default=0, type=int, help="Length of history buffer.")
     parser.add_argument("--dry_run", action="store_true", default=False, help="Print resolved config and exit.")
     cli_args.add_task_args(parser)
@@ -33,11 +38,6 @@ def main() -> None:
     app_launcher = AppLauncher(args)
     simulation_app = app_launcher.app
 
-    torch.backends.cuda.matmul.allow_tf32 = True
-    torch.backends.cudnn.allow_tf32 = True
-    torch.backends.cudnn.deterministic = False
-    torch.backends.cudnn.benchmark = False
-
     gym = require_module("gymnasium", "Install gymnasium for IsaacLab environments.")
     torch = require_module("torch", "Install PyTorch for RSL-RL training.")
     runner_mod = require_module("rsl_rl.runners", "Install rsl_rl for IsaacLab training.")
@@ -46,6 +46,11 @@ def main() -> None:
         "omni.isaac.lab_tasks.utils.wrappers.rsl_rl",
         "Install IsaacLab RSL-RL wrappers.",
     )
+
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
+    torch.backends.cudnn.deterministic = False
+    torch.backends.cudnn.benchmark = False
 
     env_cfg = lab_tasks.parse_env_cfg(task_spec.isaaclab_task, num_envs=task_spec.num_envs)
     agent_cfg = cli_args.parse_rsl_rl_cfg(task_spec, args)

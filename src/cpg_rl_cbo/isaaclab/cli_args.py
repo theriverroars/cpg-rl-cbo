@@ -64,7 +64,7 @@ def add_runner_args(parser: argparse.ArgumentParser) -> None:
         help="Logging project name (wandb/neptune).",
     )
     arg_group.add_argument("--use_cnn", action="store_true", default=None, help="Use CNN-based policy.")
-    arg_group.add_argument("--use_rnn", action="store_true", default=False, help="Use RNN-based policy.")
+    arg_group.add_argument("--use_rnn", action="store_true", help="Use RNN-based policy.")
 
 
 def parse_task_spec(args: argparse.Namespace) -> TaskSpec:
