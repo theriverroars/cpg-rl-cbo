@@ -49,7 +49,12 @@ def add_runner_args(parser: argparse.ArgumentParser) -> None:
     arg_group.add_argument("--experiment_name", type=str, default=None, help="Experiment folder name.")
     arg_group.add_argument("--run_name", type=str, default=None, help="Run name suffix.")
     arg_group.add_argument("--save_interval", type=int, default=None, help="Checkpoint save interval.")
-    arg_group.add_argument("--resume", type=bool, default=None, help="Resume from checkpoint.")
+    arg_group.add_argument(
+        "--resume",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Resume from checkpoint.",
+    )
     arg_group.add_argument("--load_run", type=str, default=None, help="Run folder to resume from.")
     arg_group.add_argument("--checkpoint", type=str, default=None, help="Checkpoint file to resume from.")
     arg_group.add_argument(
@@ -65,8 +70,8 @@ def add_runner_args(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="Logging project name (wandb/neptune).",
     )
-    arg_group.add_argument("--use_cnn", action="store_true", default=None, help="Use CNN-based policy.")
-    arg_group.add_argument("--use_rnn", action="store_true", default=None, help="Use RNN-based policy.")
+    arg_group.add_argument("--use_cnn", action="store_true", default=False, help="Use CNN-based policy.")
+    arg_group.add_argument("--use_rnn", action="store_true", default=False, help="Use RNN-based policy.")
 
 
 def parse_task_spec(args: argparse.Namespace) -> TaskSpec:
@@ -120,7 +125,7 @@ def parse_rsl_rl_cfg(task_spec: TaskSpec, args: argparse.Namespace, play: bool =
     if rslrl_cfg.logger in {"wandb", "neptune"} and args.log_project_name:
         rslrl_cfg.wandb_project = args.log_project_name
         rslrl_cfg.neptune_project = args.log_project_name
-    if args.use_cnn is not None:
+    if args.use_cnn:
         rslrl_cfg.use_cnn = args.use_cnn
         rslrl_cfg.policy.class_name = "ActorCriticDepthCNN"
         rslrl_cfg.policy.obs_depth_shape = DEFAULT_DEPTH_SHAPE

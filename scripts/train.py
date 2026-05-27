@@ -19,6 +19,12 @@ def main() -> None:
         default=True,
         help="Enable CPG-based policy heads.",
     )
+    parser.add_argument(
+        "--cudnn_benchmark",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable cuDNN autotuner for performance.",
+    )
     parser.add_argument("--history_length", default=0, type=int, help="Length of history buffer.")
     parser.add_argument("--dry_run", action="store_true", default=False, help="Print resolved config and exit.")
     cli_args.add_task_args(parser)
@@ -50,7 +56,7 @@ def main() -> None:
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
     torch.backends.cudnn.deterministic = False
-    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.benchmark = args.cudnn_benchmark
 
     env_cfg = lab_tasks.parse_env_cfg(task_spec.isaaclab_task, num_envs=task_spec.num_envs)
     agent_cfg = cli_args.parse_rsl_rl_cfg(task_spec, args)
