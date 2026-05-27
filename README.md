@@ -15,6 +15,7 @@ Modular IsaacLab-oriented skeleton for **RL + CPG + CBO** gait adaptation across
 - Terrain and morphology configuration for multi-morphology / multi-terrain training setup.
 - CBO parameter schema for optimizing: `g_c_hind`, `g_c_front`, `g_p_hind`, `g_p_front`, `x_offset_front`, `x_offset_hind`, `d_set_front`, `d_step_hind`, `h`.
 - CBO conditioning vector from morphology properties: mass, scale, link lengths, COM.
+- IsaacLab-ready training/testing CLI scaffolding (see below).
 
 ## Package layout
 
@@ -25,6 +26,45 @@ Modular IsaacLab-oriented skeleton for **RL + CPG + CBO** gait adaptation across
 - `src/cpg_rl_cbo/morphology.py`: morphology and terrain definitions.
 - `src/cpg_rl_cbo/cbo.py`: CBO parameter and conditioning schemas.
 - `src/cpg_rl_cbo/pipeline.py`: end-to-end modular gait adaptation pipeline.
+- `src/cpg_rl_cbo/isaaclab/`: IsaacLab task registry, CLI parsing, and controller bridge.
+- `scripts/train.py`: IsaacLab training entrypoint (RSL-RL).
+- `scripts/play.py`: IsaacLab evaluation entrypoint.
+
+## IsaacLab training/testing (similar to cpg-rl)
+
+These scripts mirror the structure of the `cpg-rl` repository but are adapted to the multi-morphology gait adaptation setup.
+
+### Dry-run config resolution
+
+```bash
+PYTHONPATH=src python scripts/train.py --dry_run --task=multi_morph_train
+PYTHONPATH=src python scripts/play.py --dry_run --task=multi_morph_eval
+```
+
+### Training
+
+```bash
+PYTHONPATH=src python scripts/train.py \
+  --task=multi_morph_train \
+  --enable_cpg \
+  --run_name=cpg_cbo_multi \
+  --headless
+```
+
+### Evaluation / playback
+
+```bash
+PYTHONPATH=src python scripts/play.py \
+  --task=multi_morph_eval \
+  --enable_cpg \
+  --load_run=cpg_cbo_multi \
+  --headless
+```
+
+### Task registry
+
+`src/cpg_rl_cbo/isaaclab/task_registry.py` defines two default task specs and their IsaacLab task names. Update
+`isaaclab_task` to match the task registered in your IsaacLab environment.
 
 ## DeepTransition and IsaacLab integration note
 
