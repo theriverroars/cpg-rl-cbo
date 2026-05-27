@@ -9,6 +9,8 @@ from ..morphology import Terrain
 from ..observations import ObservationProfile
 from .task_registry import TaskSpec, get_task_spec
 
+DEFAULT_DEPTH_SHAPE = (24, 32)
+
 
 def add_task_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--task", type=str, default="multi_morph_train", help="Task name from registry.")
@@ -64,7 +66,7 @@ def add_runner_args(parser: argparse.ArgumentParser) -> None:
         help="Logging project name (wandb/neptune).",
     )
     arg_group.add_argument("--use_cnn", action="store_true", default=None, help="Use CNN-based policy.")
-    arg_group.add_argument("--use_rnn", action="store_true", help="Use RNN-based policy.")
+    arg_group.add_argument("--use_rnn", action="store_true", default=None, help="Use RNN-based policy.")
 
 
 def parse_task_spec(args: argparse.Namespace) -> TaskSpec:
@@ -121,7 +123,7 @@ def parse_rsl_rl_cfg(task_spec: TaskSpec, args: argparse.Namespace, play: bool =
     if args.use_cnn is not None:
         rslrl_cfg.use_cnn = args.use_cnn
         rslrl_cfg.policy.class_name = "ActorCriticDepthCNN"
-        rslrl_cfg.policy.obs_depth_shape = (24, 32)
+        rslrl_cfg.policy.obs_depth_shape = DEFAULT_DEPTH_SHAPE
     if args.use_rnn:
         rslrl_cfg.policy.rnn_input_size = 2 * rslrl_cfg.policy.actor_hidden_dims[-1]
         rslrl_cfg.policy.rnn_hidden_size = 2 * rslrl_cfg.policy.actor_hidden_dims[-1]

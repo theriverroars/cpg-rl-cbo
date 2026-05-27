@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import acos, atan2, sqrt
+from math import acos, atan2, sin, sqrt
 
 from .cpg import FootTrajectoryPoint
 from .morphology import MorphologySpec, get_morphology
@@ -33,7 +33,7 @@ class GenericQuadrupedIK(InverseKinematicsModel):
             cos_knee = (dist * dist - self.l1 * self.l1 - self.l2 * self.l2) / (2.0 * self.l1 * self.l2)
             cos_knee = max(-1.0, min(1.0, cos_knee))
             knee_angle = acos(cos_knee)
-            hip = atan2(z, x + 1e-6) - atan2(self.l2 * knee_angle, self.l1 + self.l2 * cos_knee)
+            hip = atan2(z, x + 1e-6) - atan2(self.l2 * sin(knee_angle), self.l1 + self.l2 * cos_knee)
             joint_targets.extend([hip_abduction, hip, -knee_angle])
         return joint_targets
 
